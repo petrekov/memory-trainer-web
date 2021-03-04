@@ -6,6 +6,9 @@ import { Routes } from "../constants/Routes";
 import history from "../History";
 
 class Profile extends Component {
+
+    
+
     render() {
         return (
             <div>

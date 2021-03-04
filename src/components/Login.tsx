@@ -1,5 +1,6 @@
 import { Component, useState } from "react";
 import { toast } from "react-toastify";
+import { ApiCommunicator } from "../api/ApiCommunicator";
 import { ApiRoutes } from "../constants/ApiRoutes";
 import { Routes } from "../constants/Routes";
 import history from "../History";
@@ -22,20 +23,9 @@ class Login extends Component {
         password: "admin",
     }
 
-    onClick = () => {
-        let headers = new Headers();
-
-        headers.append('Content-Type', 'application/json');
-        headers.append('Accept', 'application/json');
-
-        fetch(process.env.REACT_APP_API_URL + ApiRoutes.Authorize, {
-            method: "POST",
-            headers: headers,
-            body: JSON.stringify(this.state)
-        })
-        .then(res => res.json())
-        .then((data: LoginApiResponse) => {
-            console.log("response");
+    onClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        event.preventDefault();
+        ApiCommunicator.CallPost<LoginApiResponse>(ApiRoutes.Authorize,(data:LoginApiResponse)=>{
             if (data.Authorized === true) {
                 toast(data.Message,{type:"success"});
                 history.push("/" + Routes.Menu);
@@ -43,29 +33,30 @@ class Login extends Component {
             else {
                 toast(data.Message,{type:"error"});
             }
-        }).catch(console.log);
-
+        },null,this.state);
 
     };
 
     render() {
         return (
             <div style={{ width: "30%", marginLeft: "35%", marginTop: "5%" }}>
+            <form>
                 <div className="form-group">
                     <label>Username</label>
                     <input
                         value={this.state.username} onChange={e => this.setState({ username: e.target.value })}
-                        type="text" className="form-control" placeholder="Enter username" />
+                        type="text" className="form-control" placeholder="Enter username" required />
                 </div>
                 <div className="form-group">
                     <label>Password</label>
                     <input
                         value={this.state.password} onChange={e => this.setState({ password: e.target.value })}
-                        type="password" className="form-control" placeholder="Password" />
+                        type="password" className="form-control" placeholder="Password" required />
                 </div>
                 <button
                     onClick={this.onClick}
                     style={{ width: "30%", marginLeft: "35%" }} type="submit" className="btn btn-primary">Login</button>
+            </form>
             </div>
         );
     }

@@ -1,3 +1,3 @@
 export const ApiRoutes = {
-    Authorize: "/Auth"
+    Authorize: "Auth"
 }
