@@ -1,3 +1,4 @@
 export const ApiRoutes = {
-    Authorize: "Auth"
+    Authorize: "Auth",
+    GetNewWords: "WordTrainer/NewWords"
 }

@@ -8,54 +8,51 @@ import { Names } from "../constants/Names";
 import { Routes } from "../constants/Routes";
 import history from "../History";
 
-interface LoginState {
-    username: string;
-    password: string;
-    guessingWord: string;
+interface TrainWordsState {
     numberOptions: string[];
     rightNumber: string;
-}
-
-interface LoginApiResponse {
-    Message: string,
-    Code: number,
-    Authorized: boolean
-}
+    guessingWord: string;
+  }
 
 class TrainWords extends Component {
 
-    state: LoginState = {
-        username: "admin",
-        password: "admin",
-        guessingWord: "Hello",
-        numberOptions: ["12", "50", "77", "00", "41", "14", "07", "7", "99"],
-        rightNumber: "07"
+
+    /**
+     *
+     */
+    constructor(props:any) {
+        super(props);
     }
 
-    onClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        event.preventDefault();
-        ApiCommunicator.CallPost<LoginApiResponse>(ApiRoutes.Authorize, (data: LoginApiResponse) => {
-            if (data.Authorized === true) {
-                toast(data.Message, { type: "success" });
-                history.push("/" + Routes.Menu);
-            }
-            else {
-                toast(data.Message, { type: "error" });
-            }
-        }, null, this.state);
+    state: TrainWordsState = {
+        guessingWord: "1",
+        numberOptions: ["1"],
+        rightNumber: "1"
+    }
 
-    };
+
 
     guessNumber = (value : string) =>{
         if(this.state.rightNumber === value){
             toast("Right answer!",{type:"success"});
+
+            ApiCommunicator.CallGet<TrainWordsState>(ApiRoutes.GetNewWords, (data: TrainWordsState) => {
+                console.log(this.state);
+                this.setState({guessingWord: "",
+                numberOptions: [""],
+                rightNumber: ""});
+                this.setState(data);
+                console.log(this.state);
+                console.log("------------------------------");
+            });
+
+            //this.forceUpdate();
         }else{
             toast("Wrong answer!",{type:"error"});
         }
     }
 
     render() {
-
         return (
             <div>
                 <div className="row" style={{ marginTop: "50px" }}>
